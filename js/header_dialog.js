@@ -14,53 +14,53 @@ function HeaderDialog(dialog, onSave) {
 	**/
 
 	var parameterVersion = [
-            {name:'dterm_average_count'	    	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'0.0.0', max:'2.6.9'},
-            {name:'rc_smoothing'			    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'0.0.0', max:'2.8.9'},
-			{name:'dynamic_pterm'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
-			{name:'iterm_reset_offset'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
-			{name:'superExpoFactor'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.6.0', max:'2.7.9'},
-			{name:'superExpoFactorYaw'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-			{name:'superExpoYawMode'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-            {name:'rollPitchItermResetRate'		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-            {name:'yawItermResetRate'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.7.0', max:'2.7.9'},
-			{name:'dynamic_pid'					, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'2.9.9'},
-			{name:'rcYawRate'					, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'999.9.9'},
-			{name:'airmode_activate_throttle'	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'999.9.9'},
-            {name:'rollPitchItermIgnoreRate'	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'3.0.1'},
-            {name:'yawItermIgnoreRate'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'2.8.0', max:'3.0.1'},
-            {name:'gyro_notch_hz'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'gyro_notch_cutoff'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'dterm_notch_hz'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'dterm_notch_cutoff'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'rc_interpolation'   			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'rc_interpolation_interval'   , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'gyro_sync_denom'			    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'pid_process_denom'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'unsynced_fast_pwm'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'fast_pwm_protocol'    		, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'motor_pwm_rate'    			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-			{name:'serialrx_provider'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'dterm_filter_type'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'pidAtMinThrottle'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'itermThrottleGain'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'3.0.1'},
-            {name:'ptermSRateWeight'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'3.0.0'},
-            {name:'dtermSetpointWeight'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'yawRateAccelLimit'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'rateAccelLimit'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'gyro_soft_type'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-            {name:'debug_mode'					, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.0', max:'999.9.9'},
-			{name:'gyro_notch_hz_2'				, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.1', max:'999.9.9'},
-			{name:'gyro_notch_cutoff_2'		    , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.0.1', max:'999.9.9'},
-			{name:'pidController'		    	, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'0.0.0', max:'3.0.1'},
-			{name:'motorOutputLow'		        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-			{name:'motorOutputHigh'		        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-			{name:'digitalIdleOffset'	        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-	        {name:'setpointRelaxRatio'			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-            {name:'antiGravityGain'             , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-	        {name:'antiGravityThreshold'        , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-            {name:'itermWindupPointPercent'     , type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.1.0', max:'999.9.9'},
-            {name:'pidSumLimit'        			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.3.0', max:'999.9.9'},
-            {name:'pidSumLimitYaw'     			, type:FIRMWARE_TYPE_BETAFLIGHT,  min:'3.3.0', max:'999.9.9'}
+            {name:'dterm_average_count'	    	, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'0.0.0', max:'2.6.9'},
+            {name:'rc_smoothing'			    , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'0.0.0', max:'2.8.9'},
+			{name:'dynamic_pterm'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.6.0', max:'2.7.9'},
+			{name:'iterm_reset_offset'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.6.0', max:'2.7.9'},
+			{name:'superExpoFactor'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.6.0', max:'2.7.9'},
+			{name:'superExpoFactorYaw'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.7.0', max:'2.7.9'},
+			{name:'superExpoYawMode'		    , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.7.0', max:'2.7.9'},
+            {name:'rollPitchItermResetRate'		, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.7.0', max:'2.7.9'},
+            {name:'yawItermResetRate'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.7.0', max:'2.7.9'},
+			{name:'dynamic_pid'					, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.8.0', max:'2.9.9'},
+			{name:'rcYawRate'					, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.8.0', max:'999.9.9'},
+			{name:'airmode_activate_throttle'	, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.8.0', max:'999.9.9'},
+            {name:'rollPitchItermIgnoreRate'	, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.8.0', max:'3.0.1'},
+            {name:'yawItermIgnoreRate'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'2.8.0', max:'3.0.1'},
+            {name:'gyro_notch_hz'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'gyro_notch_cutoff'		    , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'dterm_notch_hz'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'dterm_notch_cutoff'		    , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'rc_interpolation'   			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'rc_interpolation_interval'   , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'gyro_sync_denom'			    , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'pid_process_denom'    		, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'unsynced_fast_pwm'    		, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'fast_pwm_protocol'    		, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'motor_pwm_rate'    			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+			{name:'serialrx_provider'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'dterm_filter_type'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'pidAtMinThrottle'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'itermThrottleGain'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'3.0.1'},
+            {name:'ptermSRateWeight'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'3.0.0'},
+            {name:'dtermSetpointWeight'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'yawRateAccelLimit'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'rateAccelLimit'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'gyro_soft_type'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+            {name:'debug_mode'					, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.0', max:'999.9.9'},
+			{name:'gyro_notch_hz_2'				, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.1', max:'999.9.9'},
+			{name:'gyro_notch_cutoff_2'		    , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.0.1', max:'999.9.9'},
+			{name:'pidController'		    	, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'0.0.0', max:'3.0.1'},
+			{name:'motorOutputLow'		        , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+			{name:'motorOutputHigh'		        , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+			{name:'digitalIdleOffset'	        , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+	        {name:'setpointRelaxRatio'			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+            {name:'antiGravityGain'             , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+	        {name:'antiGravityThreshold'        , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+            {name:'itermWindupPointPercent'     , type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.1.0', max:'999.9.9'},
+            {name:'pidSumLimit'        			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.3.0', max:'999.9.9'},
+            {name:'pidSumLimitYaw'     			, type:FIRMWARE_TYPE_BUTTERFLIGHT,  min:'3.3.0', max:'999.9.9'}
 	];
 
 	function isParameterValid(name) {
@@ -376,12 +376,8 @@ function HeaderDialog(dialog, onSave) {
     	$('h5.modal-title-craft').text(    ((sysConfig['Craft name']!=null)       ?(' Name : ' + sysConfig['Craft name']    ):''));
 
 		switch(sysConfig.firmwareType) {
-			case FIRMWARE_TYPE_BETAFLIGHT:
+			case FIRMWARE_TYPE_BUTTERFLIGHT:
 			case FIRMWARE_TYPE_CLEANFLIGHT:
-				$('.header-dialog-toggle').hide(); // selection button is not required
-					break;
-			case FIRMWARE_TYPE_INAV:
-				$('[name="rates[0]"] input').attr("step", "10").attr("min", "10").attr("max", "1800");
 				$('.header-dialog-toggle').hide(); // selection button is not required
 					break;
 			default:
@@ -393,7 +389,7 @@ function HeaderDialog(dialog, onSave) {
 					if($('html').hasClass('isCF')) {
 						$('html').addClass('isBF');
 						$('html').removeClass('isCF');
-						$('.header-dialog-toggle').text('Betaflight');
+						$('.header-dialog-toggle').text('ButterFlight');
 					} else {
 						$('html').removeClass('isBF');
 						$('html').addClass('isCF');
@@ -402,9 +398,9 @@ function HeaderDialog(dialog, onSave) {
 				});
 		}
 
-		if((sysConfig.firmware >= 3.0 && sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT) ||
+		if((sysConfig.firmware >= 3.0 && sysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT) ||
 		   (sysConfig.firmware >= 2.0 && sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT)) {
-		   
+
 			PID_CONTROLLER_TYPE = ([
 					'LEGACY',
 					'BETAFLIGHT'
@@ -414,7 +410,7 @@ function HeaderDialog(dialog, onSave) {
 					'UNUSED',
 					'MWREWRITE',
 					'LUXFLOAT'
-				]) 
+				])
 		}
 
     	renderSelect("pidController", sysConfig.pidController, PID_CONTROLLER_TYPE);
@@ -452,25 +448,19 @@ function HeaderDialog(dialog, onSave) {
         setParameter('thrExpo'					,sysConfig.thrExpo,2);
         setParameter('dynThrPID'				,sysConfig.dynThrPID,2);
         setParameter('tpa-breakpoint'			,sysConfig.tpa_breakpoint,0);
-		setParameter('superExpoFactor'			,sysConfig.superExpoFactor,2);
-		setParameter('superExpoFactorYaw'		,sysConfig.superExpoFactorYaw,2);
+        setParameter('superExpoFactor'			,sysConfig.superExpoFactor,2);
+        setParameter('superExpoFactorYaw'		,sysConfig.superExpoFactorYaw,2);
 
-		if (sysConfig.firmwareType == FIRMWARE_TYPE_INAV) {
-			setParameter('rates[0]'				,sysConfig.rates[0] * 10,0);
-			setParameter('rates[1]'				,sysConfig.rates[1] * 10,0);
-			setParameter('rates[2]'				,sysConfig.rates[2] * 10,0);
-		} else {
-			setParameter('rates[0]'				,sysConfig.rates[0],2);
-	        setParameter('rates[1]'				,sysConfig.rates[1],2);
-	        setParameter('rates[2]'				,sysConfig.rates[2],2);
-		}
+        setParameter('rates[0]'				,sysConfig.rates[0],2);
+        setParameter('rates[1]'				,sysConfig.rates[1],2);
+        setParameter('rates[2]'				,sysConfig.rates[2],2);
 
         setParameter('loopTime'					,sysConfig.looptime,0);
         setParameter('gyro_sync_denom'			,sysConfig.gyro_sync_denom,0);
         setParameter('pid_process_denom'		,sysConfig.pid_process_denom,0);
         setParameter('yaw_p_limit'				,sysConfig.yaw_p_limit,0);
         setParameter('dterm_average_count'		,sysConfig.dterm_average_count,0);
-    	renderSelect('dynamic_pterm'			,sysConfig.dynamic_pterm, OFF_ON);
+        renderSelect('dynamic_pterm'			,sysConfig.dynamic_pterm, OFF_ON);
         setParameter('rollPitchItermResetRate'	,sysConfig.rollPitchItermResetRate,0);
         setParameter('yawItermResetRate'		,sysConfig.yawItermResetRate,0);
         setParameter('rollPitchItermIgnoreRate'	,sysConfig.rollPitchItermIgnoreRate,0);
@@ -480,13 +470,13 @@ function HeaderDialog(dialog, onSave) {
         setParameter('iterm_reset_offset'		,sysConfig.iterm_reset_offset,0);
         setParameter('deadband'					,sysConfig.deadband,0);
         setParameter('yaw_deadband'				,sysConfig.yaw_deadband,0);
-    	renderSelect('gyro_lpf'			    	,sysConfig.gyro_lpf, GYRO_LPF);
+        renderSelect('gyro_lpf'			    	,sysConfig.gyro_lpf, GYRO_LPF);
         setParameter('acc_lpf_hz'				,sysConfig.acc_lpf_hz,2);
         setParameter('acc_cut_hz'				,sysConfig.acc_cut_hz,2);
-	    setParameter('airmode_activate_throttle',sysConfig.airmode_activate_throttle, 0);
-	    renderSelect('serialrx_provider'		,sysConfig.serialrx_provider, SERIALRX_PROVIDER);
-	    renderSelect('superExpoYawMode'		    ,sysConfig.superExpoYawMode, SUPER_EXPO_YAW);
-    	renderSelect('dynamic_pid'				,sysConfig.dynamic_pid, OFF_ON);
+        setParameter('airmode_activate_throttle',sysConfig.airmode_activate_throttle, 0);
+        renderSelect('serialrx_provider'		,sysConfig.serialrx_provider, SERIALRX_PROVIDER);
+        renderSelect('superExpoYawMode'		    ,sysConfig.superExpoYawMode, SUPER_EXPO_YAW);
+        renderSelect('dynamic_pid'				,sysConfig.dynamic_pid, OFF_ON);
 
 		if(isParameterValid('gyro_notch_hz_2')) {
 			setParameter('gyro_notch_hz'			,sysConfig.gyro_notch_hz[0],0);
@@ -513,7 +503,7 @@ function HeaderDialog(dialog, onSave) {
         renderSelect('dterm_filter_type'		,sysConfig.dterm_filter_type, FILTER_TYPE);
         setParameter('ptermSRateWeight'			,sysConfig.ptermSRateWeight,2);
         setParameter('dtermSetpointWeight'		,sysConfig.dtermSetpointWeight,2);
-        if(activeSysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT && semver.gte(activeSysConfig.firmwareVersion, '3.1.0')) {
+        if(activeSysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT && semver.gte(activeSysConfig.firmwareVersion, '3.1.0')) {
             setParameterFloat('yawRateAccelLimit', sysConfig.yawRateAccelLimit, 2);
             setParameterFloat('rateAccelLimit'   , sysConfig.rateAccelLimit, 2);
         } else {
@@ -551,20 +541,11 @@ function HeaderDialog(dialog, onSave) {
         renderUnknownHeaders(sysConfig.unknownHeaders);
 
         /* Remove some version specific headers */
-        if(activeSysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT && semver.gte(activeSysConfig.firmwareVersion, '3.1.0')) {
+        if(activeSysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT && semver.gte(activeSysConfig.firmwareVersion, '3.1.0')) {
             $(".BFPIDController").css("display","none");
         } else {
             $(".BFPIDController").css("display","table-header-group");
         }
-
-		/*
-		 * In case of INAV, hide irrelevant options
-		 */
-		 if (sysConfig.firmwareType == FIRMWARE_TYPE_INAV) {
-			 $(".no-inav").hide();
-			 $(".bf-only").hide();
-		 }
-
     }
 
     function convertUIToSysConfig() {

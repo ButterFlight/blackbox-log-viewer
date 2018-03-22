@@ -29,7 +29,7 @@ var nwBuilderOptions = {
     version: '0.27.4',
     files: './dist/**/*',
     macIcns: './images/bf_icon.icns',
-    macPlist: { 'CFBundleDisplayName': 'Betaflight Blackbox Explorer'},
+    macPlist: { 'CFBundleDisplayName': 'ButterFlight Blackbox Explorer'},
     winIco: './images/bf_icon.ico'
 };
 
@@ -75,7 +75,7 @@ gulp.task('default', debugBuild);
 // Get platform from commandline args
 // #
 // # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --linux32, --osx64, --win32, --win64, or --chromeos)
-// # 
+// #
 function getInputPlatforms() {
     var supportedPlatforms = ['linux64', 'linux32', 'osx64', 'win32', 'win64', 'chromeos'];
     var platforms = [];
@@ -88,7 +88,7 @@ function getInputPlatforms() {
              console.log('Unknown platform: ' + arg);
              process.exit();
         }
-    }  
+    }
 
     if (platforms.length === 0) {
         var defaultPlatform = getDefaultPlatform();
@@ -126,10 +126,10 @@ function getDefaultPlatform() {
         defaultPlatform = 'win32';
 
         break;
-        
+
     default:
         defaultPlatform = '';
-    
+
         break;
     }
     return defaultPlatform;
@@ -173,27 +173,27 @@ function getRunDebugAppCommand(arch) {
 }
 
 function getReleaseFilename(platform, ext) {
-    return 'betaflight-blackbox-explorer_' + pkg.version + '_' + platform + '.' + ext;
+    return 'butterflight-blackbox-explorer_' + pkg.version + '_' + platform + '.' + ext;
 }
 
-function clean_dist() { 
-    return del([DIST_DIR + '**'], { force: true }); 
+function clean_dist() {
+    return del([DIST_DIR + '**'], { force: true });
 };
 
-function clean_apps() { 
-    return del([APPS_DIR + '**'], { force: true }); 
+function clean_apps() {
+    return del([APPS_DIR + '**'], { force: true });
 };
 
-function clean_debug() { 
-    return del([DEBUG_DIR + '**'], { force: true }); 
+function clean_debug() {
+    return del([DEBUG_DIR + '**'], { force: true });
 };
 
-function clean_release() { 
-    return del([RELEASE_DIR + '**'], { force: true }); 
+function clean_release() {
+    return del([RELEASE_DIR + '**'], { force: true });
 };
 
-function clean_cache() { 
-    return del(['./cache/**'], { force: true }); 
+function clean_cache() {
+    return del(['./cache/**'], { force: true });
 };
 
 // Real work for dist task. Done in another task to call it via
@@ -339,8 +339,8 @@ function post_build(arch, folder, done) {
         var libSrc = './library/' + arch + '/libffmpeg.so'
         var libDest = path.join(launcherDir, 'lib');
 
-        console.log('Copy Ubuntu launcher scripts to ' + launcherDir);        
-        gulp.src('assets/linux/**')                   
+        console.log('Copy Ubuntu launcher scripts to ' + launcherDir);
+        gulp.src('assets/linux/**')
             .pipe(gulp.dest(launcherDir))
             .on('end', function() {
 
@@ -410,7 +410,7 @@ function start_debug(done) {
 
     var platforms = getPlatforms();
 
-    var exec = require('child_process').exec;    
+    var exec = require('child_process').exec;
     if (platforms.length === 1) {
         var run = getRunDebugAppCommand(platforms[0]);
         console.log('Starting debug app (' + run + ')...');
@@ -452,7 +452,7 @@ function release_zip(arch) {
     var output = getReleaseFilename(arch, 'zip');
     var base = path.join(APPS_DIR, pkg.name, arch);
 
-    return compressFiles(src, base, output, 'Betaflight Blackbox Explorer');
+    return compressFiles(src, base, output, 'ButterFlight Blackbox Explorer');
 }
 
 // Create distribution package for chromeos platform
@@ -503,11 +503,11 @@ function release_deb(arch, done) {
              architecture: debArch,
              maintainer: pkg.author,
              description: pkg.description,
-             postinst: ['xdg-desktop-menu install /opt/betaflight/betaflight-blackbox-explorer/betaflight-blackbox-explorer.desktop'],
-             prerm: ['xdg-desktop-menu uninstall betaflight-blackbox-explorer.desktop'],
+             postinst: ['xdg-desktop-menu install /opt/butterflight/butterflight-blackbox-explorer/butterflight-blackbox-explorer.desktop'],
+             prerm: ['xdg-desktop-menu uninstall butterflight-blackbox-explorer.desktop'],
              depends: 'libgconf-2-4',
              changelog: [],
-             _target: 'opt/betaflight/betaflight-blackbox-explorer',
+             _target: 'opt/butterflight/butterflight-blackbox-explorer',
              _out: RELEASE_DIR,
              _copyright: 'assets/linux/copyright',
              _clean: true
@@ -537,8 +537,8 @@ function release_rpm(arch, done) {
              files:
                  [ { cwd: path.join(APPS_DIR, pkg.name, arch),
                      src: '*',
-                     dest: '/opt/betaflight/blackbox-log-viewer' } ],
-             postInstallScript: ['xdg-desktop-menu install /opt/betaflight/blackbox-log-viewer/blackbox-log-viewer.desktop'],
+                     dest: '/opt/butterflight/blackbox-log-viewer' } ],
+             postInstallScript: ['xdg-desktop-menu install /opt/butterflight/blackbox-log-viewer/blackbox-log-viewer.desktop'],
              preUninstallScript: ['xdg-desktop-menu uninstall blackbox-log-viewer.desktop'],
              tempDir: path.join(RELEASE_DIR,'tmp-rpm-build-' + arch),
              keepTemp: false,
@@ -570,7 +570,7 @@ function release_osx64() {
                 title: 'BF Blackbox Explorer', // <= volume name; should be smaller than 27 chars.
                 contents: [
                     { 'x': 448, 'y': 342, 'type': 'link', 'path': '/Applications' },
-                    { 'x': 192, 'y': 344, 'type': 'file', 'path': pkg.name + '.app', 'name': 'Betaflight Blackbox Explorer.app' }
+                    { 'x': 192, 'y': 344, 'type': 'file', 'path': pkg.name + '.app', 'name': 'ButterFlight Blackbox Explorer.app' }
                 ],
                 background: path.join(__dirname, 'images/dmg-background.png'),
                 format: 'UDZO',

@@ -5,8 +5,7 @@ var FlightLogIndex,
     FIRMWARE_TYPE_UNKNOWN = 0,
     FIRMWARE_TYPE_BASEFLIGHT = 1,
     FIRMWARE_TYPE_CLEANFLIGHT = 2,
-    FIRMWARE_TYPE_BETAFLIGHT = 3,
-    FIRMWARE_TYPE_INAV = 4;
+    FIRMWARE_TYPE_BUTTERFLIGHT = 3;
 
 var FlightLogParser = function(logData) {
     //Private constants:
@@ -253,11 +252,11 @@ var FlightLogParser = function(logData) {
             rc_interpolation_interval:null, // RC Control Interpolation Interval
             dterm_filter_type:null,         // D term filtering type (PT1, BIQUAD)
             pidAtMinThrottle:null,          // Stabilisation at zero throttle
-            itermThrottleGain:null,         // Betaflight PID
-            ptermSetpointWeight:null,       // Betaflight PID
-            dtermSetpointWeight:null,       // Betaflight PID
-            yawRateAccelLimit:null,         // Betaflight PID
-            rateAccelLimit:null,            // Betaflight PID
+            itermThrottleGain:null,         // Butterflight PID
+            ptermSetpointWeight:null,       // Butterflight PID
+            dtermSetpointWeight:null,       // Butterflight PID
+            yawRateAccelLimit:null,         // Butterflight PID
+            rateAccelLimit:null,            // Butterflight PID
             gyro_soft_type:null,            // Gyro soft filter type (PT1, BIQUAD)
             debug_mode:null,                // Selected Debug Mode
             features:null,                  // Activated features (e.g. MOTORSTOP etc)
@@ -402,7 +401,7 @@ var FlightLogParser = function(logData) {
                     case "Cleanflight":
                         that.sysConfig.firmwareType = FIRMWARE_TYPE_CLEANFLIGHT;
                         $('html').removeClass('isBaseF');
-    					$('html').addClass('isCF');
+                        $('html').addClass('isCF');
                         $('html').removeClass('isBF');
                         $('html').removeClass('isINAV');
                     break;
@@ -415,7 +414,7 @@ var FlightLogParser = function(logData) {
                 }
             break;
 
-            // Betaflight Log Header Parameters
+            // Butterflight Log Header Parameters
             case "minthrottle":
                 that.sysConfig[fieldName] = parseInt(fieldValue, 10);
                 that.sysConfig.motorOutput[0] = that.sysConfig[fieldName]; // by default, set the minMotorOutput to match minThrottle
@@ -550,7 +549,7 @@ var FlightLogParser = function(logData) {
             case "yawRateAccelLimit":
             case "rateAccelLimit":
             case "anti_gravity_gain":
-                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.1.0')) ||
+                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.1.0')) ||
                    (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(that.sysConfig.firmwareVersion, '2.0.0'))) {
                     that.sysConfig[fieldName] = parseInt(fieldValue, 10)/1000;
                 } else {
@@ -563,7 +562,7 @@ var FlightLogParser = function(logData) {
             case "dterm_notch_hz":
             case "dterm_notch_cutoff":
             case "dterm_lpf_hz":
-                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.0.1')) ||
+                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.0.1')) ||
                    (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(that.sysConfig.firmwareVersion, '2.0.0'))) {
                     that.sysConfig[fieldName] = parseInt(fieldValue, 10);
                 } else {
@@ -573,7 +572,7 @@ var FlightLogParser = function(logData) {
 
             case "gyro_notch_hz":
             case "gyro_notch_cutoff":
-                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.0.1')) ||
+                if((that.sysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT  && semver.gte(that.sysConfig.firmwareVersion, '3.0.1')) ||
                    (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(that.sysConfig.firmwareVersion, '2.0.0'))) {
                     that.sysConfig[fieldName] = parseCommaSeparatedString(fieldValue);
                 } else {
@@ -659,9 +658,8 @@ var FlightLogParser = function(logData) {
                     /* Baseflight uses a gyroScale that'll give radians per microsecond as output, whereas Cleanflight produces degrees
                      * per second and leaves the conversion to radians per us to the IMU. Let's just convert Cleanflight's scale to
                      * match Baseflight so we can use Baseflight's IMU for both: */
-                    if (that.sysConfig.firmwareType == FIRMWARE_TYPE_INAV ||
-                        that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT ||
-                        that.sysConfig.firmwareType == FIRMWARE_TYPE_BETAFLIGHT) {
+                    if (that.sysConfig.firmwareType == FIRMWARE_TYPE_CLEANFLIGHT ||
+                        that.sysConfig.firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT) {
                         that.sysConfig.gyroScale = that.sysConfig.gyroScale * (Math.PI / 180.0) * 0.000001;
                     }
             break;
@@ -669,13 +667,13 @@ var FlightLogParser = function(logData) {
 
                 //TODO Unify this somehow...
 
-                // Extract the firmware revision in case of Betaflight/Raceflight/Cleanfligh 2.x/Other
-                var matches = fieldValue.match(/(.*flight).* (\d+)\.(\d+)(\.(\d+))*/i);
+                // Extract the firmware revision in case of Butterflight/Raceflight/Cleanfligh 2.x/Other
+                var matches = fieldValue.match(/(.*Flight).* (\d+)\.(\d+)(\.(\d+))*/i);
                 if(matches!=null) {
 
-                    // Detecting Betaflight requires looking at the revision string
-                    if (matches[1] === "Betaflight") {
-                        that.sysConfig.firmwareType = FIRMWARE_TYPE_BETAFLIGHT;
+                    // Detecting Butterflight requires looking at the revision string
+                    if (matches[1] === "ButterFlight") {
+                        that.sysConfig.firmwareType = FIRMWARE_TYPE_BUTTERFLIGHT;
                         $('html').removeClass('isBaseF');
                         $('html').removeClass('isCF');
                         $('html').addClass('isBF');
@@ -688,27 +686,10 @@ var FlightLogParser = function(logData) {
 
                 } else {
 
-                    /*
-                     * Try to detect INAV
-                     */
-                    var matches = fieldValue.match(/(INAV).* (\d+)\.(\d+).(\d+)*/i);
-                    if(matches!=null) {
-                        that.sysConfig.firmwareType  = FIRMWARE_TYPE_INAV;
-                        that.sysConfig.firmware      = parseFloat(matches[2] + '.' + matches[3]);
-                        that.sysConfig.firmwarePatch = (matches[5] != null)?parseInt(matches[5]):'';
-                        //added class definition as the isBF, isCF etc classes are only used for colors and
-                        //a few images in the css.
-                        $('html').removeClass('isBaseF');
-                        $('html').removeClass('isCF');
-                        $('html').removeClass('isBF');
-                        $('html').addClass('isINAV');
-                    } else {
-
-                    	// Cleanflight 1.x and others
-                        that.sysConfig.firmwareVersion = '0.0.0';
-                        that.sysConfig.firmware        = 0.0;
-                        that.sysConfig.firmwarePatch   = 0;
-                    }
+                    // Cleanflight 1.x and others
+                    that.sysConfig.firmwareVersion = '0.0.0';
+                    that.sysConfig.firmware        = 0.0;
+                    that.sysConfig.firmwarePatch   = 0;
                 }
                 that.sysConfig[fieldName] = fieldValue;
 
@@ -1409,7 +1390,7 @@ var FlightLogParser = function(logData) {
         }
 
         adjustFieldDefsList(that.sysConfig.firmwareType, that.sysConfig.firmwareVersion);
-        
+
         if (!isFrameDefComplete(this.frameDefs.I)) {
             throw "Log is missing required definitions for I frames, header may be corrupt";
         }

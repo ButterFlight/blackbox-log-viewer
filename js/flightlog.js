@@ -924,10 +924,9 @@ function FlightLog(logData) {
 
         parser.parseHeader(logIndexes.getLogBeginOffset(index), logIndexes.getLogBeginOffset(index + 1));
 
-        // Hide the header button if we are not using betaflight
+        // Hide the header button if we are not using butterflight
         switch (this.getSysConfig().firmwareType) {
-            case FIRMWARE_TYPE_BETAFLIGHT:
-            case FIRMWARE_TYPE_INAV:
+            case FIRMWARE_TYPE_BUTTERFLIGHT:
                 $(".open-header-dialog").show()
                 break;
 
@@ -957,7 +956,7 @@ FlightLog.prototype.gyroRawToDegreesPerSecond = function(value) {
 
 /***
 
-    The rcCommandToDegreesPerSecond function is betaflight version specific
+    The rcCommandToDegreesPerSecond function is butterflight version specific
     due to the coding improvements from v2.8.0 onwards
 
 **/
@@ -1063,7 +1062,7 @@ FlightLog.prototype.rcCommandRawToDegreesPerSecond = function(value, axis, curre
 
             return calculateRate(value, axis) >> 2; // the shift by 2 is to counterbalance the divide by 4 that occurs on the gyro to calculate the error
 
-    } else { // earlier version of betaflight
+    } else { // earlier version of butterflight
 
             var that = this;
 
@@ -1116,7 +1115,7 @@ FlightLog.prototype.getPIDPercentage = function(value) {
 
 
 FlightLog.prototype.getReferenceVoltageMillivolts = function() {
-    if((this.getSysConfig().firmwareType == FIRMWARE_TYPE_BETAFLIGHT  && semver.gte(this.getSysConfig().firmwareVersion, '3.1.0')) ||
+    if((this.getSysConfig().firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT  && semver.gte(this.getSysConfig().firmwareVersion, '3.1.0')) ||
        (this.getSysConfig().firmwareType == FIRMWARE_TYPE_CLEANFLIGHT && semver.gte(this.getSysConfig().firmwareVersion, '2.0.0'))) {
         return this.getSysConfig().vbatref * 100;
     } else {

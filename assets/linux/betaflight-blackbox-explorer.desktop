@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Betaflight Blackbox Explorer
-Comment=Crossplatform blackbox analitics tool for Betaflight flight control system
-Exec=/opt/betaflight/betaflight-blackbox-explorer/betaflight-blackbox-explorer
-Icon=/opt/betaflight/betaflight-blackbox-explorer/icon/bf_icon_128.png
+Name=ButterFlight Blackbox Explorer
+Comment=Crossplatform blackbox analitics tool for ButterFlight flight control system
+Exec=/opt/butterflight/butterflight-blackbox-explorer/butterflight-blackbox-explorer
+Icon=/opt/butterflight/butterflight-blackbox-explorer/icon/bf_icon_128.png
 Terminal=false
 Type=Application

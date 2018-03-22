@@ -5,25 +5,25 @@ function makeReadOnly(x) {
     if (Object.freeze) {
         return Object.freeze(x);
     }
-    
+
     // Otherwise a no-op
     return x;
 }
 
-var 
+var
     FlightLogEvent = makeReadOnly({
         SYNC_BEEP: 0,
-        
+
         AUTOTUNE_CYCLE_START: 10,
         AUTOTUNE_CYCLE_RESULT: 11,
         AUTOTUNE_TARGETS: 12,
         INFLIGHT_ADJUSTMENT: 13,
         LOGGING_RESUME: 14,
-        
+
         GTUNE_CYCLE_RESULT: 20,
         FLIGHT_MODE: 30, // New Event type
         TWITCH_TEST: 40, // Feature for latency testing
-        
+
         CUSTOM : 250, // Virtual Event Code - Never part of Log File.
         CUSTOM_BLANK : 251, // Virtual Event Code - Never part of Log File. - No line shown
         LOG_END: 255
@@ -36,7 +36,7 @@ var
             YAW:   2
     }),
 
-        
+
     FLIGHT_LOG_FLIGHT_MODE_NAME = makeReadOnly([
             'ARM',
             'ANGLE',
@@ -117,7 +117,7 @@ var
     FAST_PROTOCOL = makeReadOnly([
             "PWM",
             "ONESHOT125",
-            "ONESHOT42", 
+            "ONESHOT42",
             "MULTISHOT",
             "BRUSHED",
             "DSHOT150",
@@ -128,7 +128,7 @@ var
 
     MOTOR_SYNC = makeReadOnly([
             "SYNCED",
-            "UNSYNCED" 
+            "UNSYNCED"
     ]),
 
     SERIALRX_PROVIDER = makeReadOnly([
@@ -147,7 +147,7 @@ var
             "OFF",
             "DEFAULT",
             "AUTO",
-            "MANUAL"             
+            "MANUAL"
     ]),
 
     FILTER_TYPE = makeReadOnly([
@@ -243,7 +243,7 @@ var
         "SMALL_ANGLE",
         "FIXED_WING"
     ]),
-    
+
     FLIGHT_LOG_FAILSAFE_PHASE_NAME = makeReadOnly([
         "IDLE",
         "RX_LOSS_DETECTED",
@@ -252,7 +252,7 @@ var
     ]);
 
 function adjustFieldDefsList(firmwareType, firmwareVersion) {
-    if((firmwareType == FIRMWARE_TYPE_BETAFLIGHT) && semver.gte(firmwareVersion, '3.3.0')) {
+    if((firmwareType == FIRMWARE_TYPE_BUTTERFLIGHT) && semver.gte(firmwareVersion, '3.3.0')) {
         DEBUG_MODE = DEBUG_MODE_COMPLETE.slice(0);
         DEBUG_MODE.splice(DEBUG_MODE.indexOf('MIXER'),        1);
         DEBUG_MODE.splice(DEBUG_MODE.indexOf('AIRMODE'),      1);
