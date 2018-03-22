@@ -12,15 +12,15 @@ function BlackboxLogViewer() {
     function supportsRequiredAPIs() {
         return window.File && window.FileReader && window.FileList && Modernizr.canvas;
     }
-    
+
     if (!supportsRequiredAPIs()) {
         alert("Your browser does not support the APIs required for reading log files.");
     }
-    
+
     var
         GRAPH_STATE_PAUSED = 0,
         GRAPH_STATE_PLAY = 1,
-        
+
         SMALL_JUMP_TIME = 100 * 1000,
         PLAYBACK_MIN_RATE = 5,
         PLAYBACK_MAX_RATE = 300,
@@ -30,7 +30,7 @@ function BlackboxLogViewer() {
         GRAPH_MAX_ZOOM = 1000,
         GRAPH_DEFAULT_ZOOM = 100,
         GRAPH_ZOOM_STEP = 10;
-    
+
     var
         graphState = GRAPH_STATE_PAUSED,
         currentBlackboxTime = 0,
@@ -38,18 +38,18 @@ function BlackboxLogViewer() {
         flightLog, flightLogDataArray,
         graph = null,
         latestVersion,
-        
+
         prefs = new PrefStorage(),
-        
+
         configuration = null,           					       // is their an associated dump file ?
         configurationDefaults = new ConfigurationDefaults(prefs),  // configuration defaults
 
         // User's video render config:
         videoConfig = {},
-        
+
         // JSON graph configuration:
         graphConfig = {},
-        
+
 
         offsetCache = [], // Storage for the offset cache (last 20 files)
         currentOffsetCache = {log:null, index:null, video:null, offset:null},
@@ -58,13 +58,13 @@ function BlackboxLogViewer() {
         lastGraphConfig = null,     // Undo feature - go back to last configuration.
         workspaceGraphConfigs = {}, // Workspaces
         bookmarkTimes	= [],		// Empty array for bookmarks (times)
-        
+
         // Graph configuration which is currently in use, customised based on the current flight log from graphConfig
         activeGraphConfig = new GraphConfig(),
-        
+
         graphLegend = null,
         fieldPresenter = FlightLogFieldPresenter,
-        
+
         hasVideo = false, hasLog = false, hasMarker = false, // add measure feature
         hasTable = true, hasCraft = true, hasSticks = true, hasAnalyser, hasAnalyserFullscreen,
         hasAnalyserSticks = false, viewVideo = true, hasTableOverlay = false, hadTable,
@@ -83,23 +83,23 @@ function BlackboxLogViewer() {
 
         videoURL = false,
         videoOffset = 0.0,
-        
+
         videoExportInTime = false,
         videoExportOutTime = false,
 
         markerTime = 0, // New marker time
-        
+
         graphRendersCount = 0,
-        
+
         seekBarCanvas = $(".log-seek-bar canvas")[0],
         seekBar = new SeekBar(seekBarCanvas),
-        
+
         seekBarRepaintRateLimited = $.throttle(200, $.proxy(seekBar.repaint, seekBar)),
-        
+
         updateValuesChartRateLimited,
-        
+
         animationFrameIsQueued = false,
-        
+
         playbackRate = PLAYBACK_DEFAULT_RATE,
 
         graphZoom = GRAPH_DEFAULT_ZOOM,
@@ -108,46 +108,46 @@ function BlackboxLogViewer() {
     function blackboxTimeFromVideoTime() {
         return (video.currentTime - videoOffset) * 1000000 + flightLog.getMinTime();
     }
-    
+
     function syncLogToVideo() {
         if (hasLog) {
             currentBlackboxTime = blackboxTimeFromVideoTime();
         }
     }
-    
+
     function setVideoOffset(offset, withRefresh) { // optionally prevent the graph refresh until later
         videoOffset = offset;
-        
-        /* 
+
+        /*
          * Round to 2 dec places for display and put a plus at the start for positive values to emphasize the fact it's
          * an offset
          */
         $(".video-offset").val((videoOffset >= 0 ? "+" : "") + (videoOffset.toFixed(3) != videoOffset ? videoOffset.toFixed(3) : videoOffset));
-        
+
         if (withRefresh) invalidateGraph();
     }
-    
+
     function isInteger(value) {
         return (value | 0) == value || Math.trunc(value) == value;
     }
-    
+
     function atMost2DecPlaces(value) {
         if (isInteger(value))
             return value; //it's an integer already
-    
+
         if (value === null)
             return "(absent)";
-        
+
         return value.toFixed(2);
     }
-    
+
     function updateValuesChart() {
-        var 
+        var
             table = $(".log-field-values table"),
             i,
             frame = flightLog.getSmoothedFrameAtTime(currentBlackboxTime),
             fieldNames = flightLog.getMainFieldNames();
-        
+
         $("tr:not(:first)", table).remove();
 
         if (frame) {
@@ -156,13 +156,13 @@ function BlackboxLogViewer() {
 
             if(hasTable || hasTableOverlay) { // Only redraw the table if it is enabled
 
-                var 
+                var
                     rows = [],
                     rowCount = Math.ceil(fieldNames.length / 2);
 
                 for (i = 0; i < rowCount; i++) {
-                    var 
-                        row = 
+                    var
+                        row =
                             "<tr>" +
                             '<td>' + fieldPresenter.fieldNameToFriendly(fieldNames[i], flightLog.getSysConfig().debug_mode) + '</td>' +
                             '<td class="raw-value">' + atMost2DecPlaces(frame[i]) + '</td>' +
@@ -171,7 +171,7 @@ function BlackboxLogViewer() {
                         secondColumn = i + rowCount;
 
                     if (secondColumn < fieldNames.length) {
-                        row += 
+                        row +=
                             '<td>' + fieldPresenter.fieldNameToFriendly(fieldNames[secondColumn], flightLog.getSysConfig().debug_mode) + '</td>' +
                             '<td>' + atMost2DecPlaces(frame[secondColumn]) + '</td>' +
                             '<td>' + fieldPresenter.decodeFieldToFriendly(flightLog, fieldNames[secondColumn], frame[secondColumn], currentFlightMode) + '</td>';
@@ -183,12 +183,12 @@ function BlackboxLogViewer() {
                 }
 
                 table.append(rows.join(""));
-                
+
             }
 
             // Update flight mode flags on status bar
             $(".flight-mode", statusBar).text(
-            		fieldPresenter.decodeFieldToFriendly(null, 'flightModeFlags', currentFlightMode, null)	
+            		fieldPresenter.decodeFieldToFriendly(null, 'flightModeFlags', currentFlightMode, null)
             	);
 
             // update time field on status bar
@@ -199,63 +199,63 @@ function BlackboxLogViewer() {
 
             // Update the Legend Values
             if(graphLegend) graphLegend.updateValues(flightLog, frame);
-            
+
         }
     }
-    
+
     updateValuesChartRateLimited = $.throttle(250, updateValuesChart);
-    
+
     function animationLoop() {
-        var 
+        var
             now = Date.now();
-        
+
         if (!graph) {
             animationFrameIsQueued = false;
             return;
         }
-        
+
         if (hasVideo) {
             currentBlackboxTime = blackboxTimeFromVideoTime();
         } else if (graphState == GRAPH_STATE_PLAY) {
             var
                 delta;
-            
+
             if (lastRenderTime === false) {
                 delta = 0;
             } else {
                 delta = Math.floor((now - lastRenderTime) * 1000 * playbackRate / 100);
             }
-    
+
             currentBlackboxTime += delta;
-    
+
             if (currentBlackboxTime > flightLog.getMaxTime()) {
                 currentBlackboxTime = flightLog.getMaxTime();
                 setGraphState(GRAPH_STATE_PAUSED);
             }
         }
-        
+
         graph.render(currentBlackboxTime);
         graphRendersCount++;
-        
+
         seekBar.setCurrentTime(currentBlackboxTime);
         seekBar.setWindow(graph.getWindowWidthTime());
 
         updateValuesChartRateLimited();
-        
+
         if (graphState == GRAPH_STATE_PLAY) {
             lastRenderTime = now;
-            
+
             seekBarRepaintRateLimited();
-            
+
             animationFrameIsQueued = true;
             requestAnimationFrame(animationLoop);
         } else {
             seekBar.repaint();
-            
+
             animationFrameIsQueued = false;
         }
     }
-    
+
     function invalidateGraph() {
         if (!animationFrameIsQueued) {
             animationFrameIsQueued = true;
@@ -267,15 +267,15 @@ function BlackboxLogViewer() {
         var
             width = $(canvas).width(),
             height = $(canvas).height();
-        
+
         if (graph) {
             graph.resize(width, height);
             seekBar.resize(canvas.offsetWidth, 50);
-            
+
             invalidateGraph();
         }
     }
-    
+
     function renderLogFileInfo(file) {
         $(".log-filename").text(file.name);
 
@@ -286,10 +286,10 @@ function BlackboxLogViewer() {
             index;
 
         logIndexContainer.empty();
-        
+
         if (logCount > 1) {
             logIndexPicker = $('<select class="log-index form-control no-wheel">');
-            
+
             logIndexPicker.change(function() {
                 selectLog(parseInt($(this).val(), 10));
                 if(graph) {
@@ -298,60 +298,60 @@ function BlackboxLogViewer() {
                 }
             });
         }
-        
+
         for (index = 0; index < logCount; index++) {
             var
                 logLabel,
                 option, holder,
                 error;
-            
+
             error = flightLog.getLogError(index);
-            
+
             if (error) {
                 logLabel = error;
             } else {
-                logLabel = formatTime(flightLog.getMinTime(index) / 1000, false) 
+                logLabel = formatTime(flightLog.getMinTime(index) / 1000, false)
                     + " - " + formatTime(flightLog.getMaxTime(index) / 1000 , false)
                     + " [" + formatTime(Math.ceil((flightLog.getMaxTime(index) - flightLog.getMinTime(index)) / 1000), false) + "]";
             }
-            
+
             if (logCount > 1) {
                 option = $("<option></option>");
-            
+
                 option.text((index + 1) + "/" + (flightLog.getLogCount()) + ": " + logLabel);
                 option.attr("value", index);
-                
+
                 if (error)
                     option.attr("disabled", "disabled");
-                
+
                 logIndexPicker.append(option);
             } else {
                 holder = $('<div class="form-control-static no-wheel"></div>');
-                
+
                 holder.text(logLabel);
                 logIndexContainer.append(holder);
             }
         }
-    
+
         if (logCount > 1) {
             logIndexPicker.val(0);
             logIndexContainer.append(logIndexPicker);
         }
     }
-    
+
     /**
      * Update the metadata displays to show information about the currently selected log index.
      */
     function renderSelectedLogInfo() {
         $(".log-index").val(flightLog.getLogIndex());
-                
+
         if (flightLog.getNumCellsEstimate()) {
             $(".log-cells").text(flightLog.getNumCellsEstimate() + "S (" + Number(flightLog.getReferenceVoltageMillivolts() / 1000).toFixed(2) + "V)");
             $(".log-cells-header,.log-cells").css('display', 'block');
         } else {
             $(".log-cells-header,.log-cells").css('display', 'none');
         }
-        
+
         /**
         Removed as cant see a reason to display this information
 
@@ -362,7 +362,7 @@ function BlackboxLogViewer() {
            $(".log-device-uid-header,.log-device-uid").css('display', 'none');
         }
         **/
-        
+
         // Add log version information to status bar
         var sysConfig = flightLog.getSysConfig();
         $('.version', statusBar).text( ((sysConfig['Craft name']!=null)?(sysConfig['Craft name'] + ' : '):'') +
@@ -372,21 +372,21 @@ function BlackboxLogViewer() {
 
         seekBar.setTimeRange(flightLog.getMinTime(), flightLog.getMaxTime(), currentBlackboxTime);
         seekBar.setActivityRange(flightLog.getSysConfig().motorOutput[0], flightLog.getSysConfig().motorOutput[1]);
-        
-        var 
+
+        var
             activity = flightLog.getActivitySummary();
-        
+
         seekBar.setActivity(activity.times, activity.avgThrottle, activity.hasEvent);
-        
+
         seekBar.repaint();
     }
-    
+
     function setGraphState(newState) {
         graphState = newState;
         var btnLogPlayPause = $(".log-play-pause");
 
         lastRenderTime = false;
-        
+
         switch (newState) {
             case GRAPH_STATE_PLAY:
                 if (hasVideo) {
@@ -401,64 +401,64 @@ function BlackboxLogViewer() {
                 $("span", btnLogPlayPause).attr('class', 'glyphicon glyphicon-play');
             break;
         }
-        
+
         invalidateGraph();
     }
-    
+
     function setCurrentBlackboxTime(newTime) {
         if (hasVideo) {
             video.currentTime = (newTime - flightLog.getMinTime()) / 1000000 + videoOffset;
-        
+
             syncLogToVideo();
         } else {
             currentBlackboxTime = newTime;
         }
-        
+
         invalidateGraph();
     }
-    
+
     function setVideoTime(newTime) {
         video.currentTime = newTime;
-    
+
         syncLogToVideo();
     }
-    
+
     function setVideoInTime(inTime) {
         videoExportInTime = inTime;
-        
+
         if (seekBar) {
             seekBar.setInTime(videoExportInTime);
         }
-        
+
         if (graph) {
             graph.setInTime(videoExportInTime);
             invalidateGraph();
         }
     }
-    
+
     function setVideoOutTime(outTime) {
         videoExportOutTime = outTime;
-        
+
         if (seekBar) {
             seekBar.setOutTime(videoExportOutTime);
         }
-        
+
         if (graph) {
             graph.setOutTime(videoExportOutTime);
             invalidateGraph();
         }
     }
-    
+
     function setPlaybackRate(rate) {
         if (rate >= PLAYBACK_MIN_RATE && rate <= PLAYBACK_MAX_RATE) {
               playbackRate = rate;
-              
+
               if (video) {
                   video.playbackRate = rate / 100;
               }
         }
     }
-    
+
     function setGraphZoom(zoom) {
         if (zoom == null) { // go back to last zoom value
             zoom = lastGraphZoom;
@@ -466,14 +466,14 @@ function BlackboxLogViewer() {
         if (zoom >= GRAPH_MIN_ZOOM && zoom <= GRAPH_MAX_ZOOM) {
             lastGraphZoom = graphZoom;
             graphZoom = zoom;
-            
+
             if (graph) {
                 graph.setGraphZoom(zoom / 100);
                 invalidateGraph();
             }
         }
     }
-    
+
     function showConfigFile(state) {
             if(hasConfig) {
                 if(state == null) { // no state specified, just toggle
@@ -502,7 +502,7 @@ function BlackboxLogViewer() {
     function selectLog(logIndex) {
         var
             success = false;
-        
+
         try {
             if (logIndex === null) {
                 for (var i = 0; i < flightLog.getLogCount(); i++) {
@@ -512,7 +512,7 @@ function BlackboxLogViewer() {
                         break;
                     }
                 }
-                
+
                 if (!success) {
                     throw "No logs in this file could be parsed successfully";
                 }
@@ -525,12 +525,12 @@ function BlackboxLogViewer() {
             currentOffsetCache.index = null;
             return;
         }
-        
+
         if (graph) {
             graph.destroy();
         }
 
-        
+
         if((flightLog.getSysConfig().looptime             != null) &&
             (flightLog.getSysConfig().frameIntervalPNum   != null) &&
             (flightLog.getSysConfig().frameIntervalPDenom != null) ) {
@@ -538,16 +538,16 @@ function BlackboxLogViewer() {
                 }
 
         graph = new FlightLogGrapher(flightLog, activeGraphConfig, canvas, craftCanvas, analyserCanvas, userSettings);
-        
+
         setVideoInTime(false);
         setVideoOutTime(false);
-    
+
         activeGraphConfig.adaptGraphs(flightLog, graphConfig);
-        
+
         graph.onSeek = function(offset) {
             //Seek faster
             offset *= 2;
-            
+
             if (hasVideo) {
                 setVideoTime(video.currentTime + offset / 1000000);
             } else {
@@ -555,28 +555,28 @@ function BlackboxLogViewer() {
             }
             invalidateGraph();
         };
-        
+
         if (hasVideo) {
             syncLogToVideo();
         } else {
             // Start at beginning:
             currentBlackboxTime = flightLog.getMinTime();
         }
-        
+
         renderSelectedLogInfo();
-        
+
         updateCanvasSize();
-        
+
         setGraphState(GRAPH_STATE_PAUSED);
         setGraphZoom(graphZoom);
     }
-    
+
     function loadLogFile(file) {
         var reader = new FileReader();
-    
+
         reader.onload = function(e) {
             var bytes = e.target.result;
-            
+
             var fileContents = String.fromCharCode.apply(null, new Uint8Array(bytes, 0,100));
 
             if(fileContents.match(/# dump|# diff/i)) { // this is actually a configuration file
@@ -593,27 +593,27 @@ function BlackboxLogViewer() {
                        hasConfig = true;
                        html.toggleClass("has-config", hasConfig);
                    }
-                   
+
                    } catch(e) {
                        configuration = null;
                        hasConfig = false;
                    }
-               return;            
+               return;
             }
 
             flightLogDataArray = new Uint8Array(bytes);
-            
+
             try {
                 flightLog = new FlightLog(flightLogDataArray);
             } catch (err) {
                 alert("Sorry, an error occured while trying to open this log:\n\n" + err);
                 return;
             }
-            
+
             renderLogFileInfo(file);
             currentOffsetCache.log      = file.name; // store the name of the loaded log file
             currentOffsetCache.index    = null;      // and clear the index
-            
+
             hasLog = true; html.toggleClass("has-log", hasLog);
             html.toggleClass("has-craft", hasCraft);
             html.toggleClass("has-table", hasTable);
@@ -622,50 +622,50 @@ function BlackboxLogViewer() {
             setTimeout(function(){$(window).resize();}, 500 ); // refresh the window size;
 
             selectLog(null);
-            
+
             if (graph) {
                 (hasAnalyserFullscreen)?html.addClass("has-analyser-fullscreen"):html.removeClass("has-analyser-fullscreen");
                 graph.setAnalyser(hasAnalyserFullscreen);
             }
 
         };
-    
+
         reader.readAsArrayBuffer(file);
     }
-    
+
     function loadVideo(file) {
         currentOffsetCache.video = file.name; // store the name of the loaded video
         if (videoURL) {
             URL.revokeObjectURL(videoURL);
             videoURL = false;
         }
-        
+
         if (!URL.createObjectURL) {
             alert("Sorry, your web browser doesn't support showing videos from your local computer. Try Google Chrome instead.");
             currentOffsetCache.video = null; // clear the associated video name
             return;
         }
-            
+
         videoURL = URL.createObjectURL(file);
         video.volume = 0.05;
         video.src = videoURL;
-        
+
         // Reapply the last playbackRate to the new video
         setPlaybackRate(playbackRate);
     }
-    
+
     function videoLoaded(e) {
         hasVideo = true;
         html.toggleClass("has-video", hasVideo);
-        
+
         setGraphState(GRAPH_STATE_PAUSED);
         invalidateGraph();
     }
-    
+
     function reportVideoError(e) {
         alert("Your video could not be loaded, your browser might not support this kind of video. Try Google Chrome instead.");
     }
-    
+
     function onLegendVisbilityChange(hidden) {
         prefs.set('log-legend-hidden', hidden);
         updateCanvasSize();
@@ -673,7 +673,7 @@ function BlackboxLogViewer() {
 
     function onLegendSelectionChange() {
             hasAnalyser = true;
-            graph.setDrawAnalyser(hasAnalyser);            
+            graph.setDrawAnalyser(hasAnalyser);
             html.toggleClass("has-analyser", hasAnalyser);
             prefs.set('hasAnalyser', hasAnalyser);
             invalidateGraph();
@@ -688,14 +688,14 @@ function BlackboxLogViewer() {
         isFullscreen = state;
         html.toggleClass("is-fullscreen",state);
     }
-    
+
     this.getMarker = function() { // get marker field
         return {
             state:hasMarker,
             time:markerTime
             };
     }
-    
+
     this.getBookmarks = function() { // get bookmark events
     	var bookmarks = [];
     	try {
@@ -709,7 +709,7 @@ function BlackboxLogViewer() {
 			    		} else bookmarks[i] = null;
 		    	}
     		}
-	    	return bookmarks;	    		
+	    	return bookmarks;
     	} catch(e) {
     		return null;
     	}
@@ -718,7 +718,7 @@ function BlackboxLogViewer() {
     this.getBookmarkTimes = function() {
         return bookmarkTimes;
     }
-           
+
     prefs.get('videoConfig', function(item) {
         if (item) {
             videoConfig = item;
@@ -731,10 +731,10 @@ function BlackboxLogViewer() {
             };
         }
     });
-    
+
     prefs.get('graphConfig', function(item) {
         graphConfig = GraphConfig.load(item);
-        
+
         if (!graphConfig) {
             graphConfig = GraphConfig.getExampleGraphConfigs(flightLog, ["Motors", "Gyros"]);
         }
@@ -767,16 +767,16 @@ function BlackboxLogViewer() {
     function loadWorkspaces(file) {
 
         var reader = new FileReader();
-    
+
         reader.onload = function(e) {
 
             var data = e.target.result;
             workspaceGraphConfigs = JSON.parse(data);
             prefs.set('workspaceGraphConfigs', workspaceGraphConfigs);      // Store to local cache
- 
-            window.alert('Workspaces Loaded')                       
+
+            window.alert('Workspaces Loaded')
         };
-     
+
         reader.readAsText(file);
     }
 
@@ -797,11 +797,11 @@ function BlackboxLogViewer() {
             offsetCache = item;
         }
     })
-    
+
     activeGraphConfig.addListener(function() {
         invalidateGraph();
     });
-    
+
     $(document).ready(function() {
 
         $('[data-toggle="tooltip"]').tooltip({trigger: "hover", placement: "auto bottom"}); // initialise tooltips
@@ -814,7 +814,7 @@ function BlackboxLogViewer() {
         $("#viewer-version").text('You are using version ' + VIEWER_VERSION);
         $(".viewer-version", statusBar).text('v'+VIEWER_VERSION);
         try {
-            $.getJSON('https://api.github.com/repos/betaflight/blackbox-log-viewer/releases/latest',{},function(data){
+            $.getJSON('https://api.github.com/repos/butterflight/blackbox-log-viewer/releases/latest',{},function(data){
                 latestVersion = data;
                 if(latestVersion) {
                     $(".btn-viewer-download").text(latestVersion.tag_name);
@@ -823,14 +823,14 @@ function BlackboxLogViewer() {
                     $(".viewer-download").hide();
                 }
                 });
-        } catch (e) 
+        } catch (e)
         {
             console.log('Cannot get latest version information');
             $(".viewer-download").hide();
         }
 
         graphLegend = new GraphLegend($(".log-graph-legend"), activeGraphConfig, onLegendVisbilityChange, onLegendSelectionChange, zoomGraphConfig, expandGraphConfig, newGraphConfig);
-        
+
         prefs.get('log-legend-hidden', function(item) {
             if (item) {
                 graphLegend.hide();
@@ -841,14 +841,14 @@ function BlackboxLogViewer() {
            if (item) {
                hasCraft = item;
                html.toggleClass("has-craft", hasCraft);
-           } 
+           }
         });
 
         prefs.get('hasSticks', function(item) {
            if (item) {
                hasSticks = item;
                html.toggleClass("has-sticks", hasSticks);
-           } 
+           }
         });
 
         /* Always start with the table hidden
@@ -856,27 +856,27 @@ function BlackboxLogViewer() {
            if (item) {
                hasTable = item;
                html.toggleClass("has-table", hasTable);
-           } 
+           }
         });
         */
         hasTable = false;
         html.toggleClass("has-table", hasTable);
-        
+
         // Reset the analyser window on application startup.
         hasAnalyser = false;
         html.toggleClass("has-analyser", hasAnalyser);
 
-        $(".btn-new-window").click(function(e) {            
+        $(".btn-new-window").click(function(e) {
             chrome.app.window.create('index.html', {
                 'innerBounds' : {
                     'width'  : INNER_BOUNDS_WIDTH,
                     'height' : INNER_BOUNDS_HEIGHT
                 }
-            });            
+            });
         });
-        
+
         $(".file-open").change(function(e) {
-            var 
+            var
                 files = e.target.files,
                 i;
 
@@ -885,14 +885,14 @@ function BlackboxLogViewer() {
                     isLog = files[i].name.match(/\.(BBL|TXT|CFL|BFL|LOG)$/i),
                     isVideo = files[i].name.match(/\.(AVI|MOV|MP4|MPEG)$/i),
                     isWorkspaces = files[i].name.match(/\.(JSON)$/i);
-                
+
                 if (!isLog && !isVideo && !isWorkspaces) {
                     if (files[i].size < 10 * 1024 * 1024)
                         isLog = true; //Assume small files are logs rather than videos
                     else
                         isVideo = true;
                 }
-                
+
                 if (isLog) {
                     loadLogFile(files[i]);
                 } else if (isVideo) {
@@ -913,37 +913,37 @@ function BlackboxLogViewer() {
 
             }
         });
-        
+
         // New View Controls
         $(".view-video").click(function() {
             viewVideo = !viewVideo;
-            html.toggleClass("video-hidden", !viewVideo);       
+            html.toggleClass("video-hidden", !viewVideo);
         });
 
         $(".view-craft").click(function() {
             hasCraft = !hasCraft;
-            html.toggleClass("has-craft", hasCraft);       
+            html.toggleClass("has-craft", hasCraft);
             prefs.set('hasCraft', hasCraft);
         });
 
         $(".view-sticks").click(function() {
             hasSticks = !hasSticks;
-            graph.setDrawSticks(hasSticks);            
-            html.toggleClass("has-sticks", hasSticks);  
+            graph.setDrawSticks(hasSticks);
+            html.toggleClass("has-sticks", hasSticks);
             prefs.set('hasSticks', hasSticks);
             invalidateGraph();
         });
-        
+
         $(".view-table").click(function() {
             showValueTable();
             showConfigFile(false); // hide the config file
             /*
             hasTable = !hasTable;
-            html.toggleClass("has-table", hasTable);       
+            html.toggleClass("has-table", hasTable);
             prefs.set('hasTable', hasTable);
             */
         });
-       
+
         $(".view-config").click(function() {
             showValueTable(false); // hide the table
             showConfigFile();
@@ -951,17 +951,17 @@ function BlackboxLogViewer() {
 
         $(".view-analyser").click(function() {
             if(activeGraphConfig.selectedFieldName != null) {
-                hasAnalyser = !hasAnalyser; 
+                hasAnalyser = !hasAnalyser;
             } else hasAnalyser = false;
-            graph.setDrawAnalyser(hasAnalyser);            
-            html.toggleClass("has-analyser", hasAnalyser);       
+            graph.setDrawAnalyser(hasAnalyser);
+            html.toggleClass("has-analyser", hasAnalyser);
             prefs.set('hasAnalyser', hasAnalyser);
             invalidateGraph();
         });
 
         $(".view-analyser-fullscreen").click(function() {
             if(hasAnalyser) {
-                hasAnalyserFullscreen = !hasAnalyserFullscreen; 
+                hasAnalyserFullscreen = !hasAnalyserFullscreen;
             } else hasAnalyserFullscreen = false;
             (hasAnalyserFullscreen)?html.addClass("has-analyser-fullscreen"):html.removeClass("has-analyser-fullscreen");
             graph.setAnalyser(hasAnalyserFullscreen);
@@ -1019,7 +1019,7 @@ function BlackboxLogViewer() {
                     setCurrentBlackboxTime(currentBlackboxTime - scrollTime);
                 }
             }
-            
+
             setGraphState(GRAPH_STATE_PAUSED);
         };
         $(".log-jump-back").click(function() {logJumpBack(false);});
@@ -1039,29 +1039,29 @@ function BlackboxLogViewer() {
                     setCurrentBlackboxTime(currentBlackboxTime + scrollTime);
                 }
             }
-            
+
             setGraphState(GRAPH_STATE_PAUSED);
         };
         $(".log-jump-forward").click(function() {logJumpForward(false);});
-        
+
         var logJumpStart = function() {
             setCurrentBlackboxTime(flightLog.getMinTime());
             setGraphState(GRAPH_STATE_PAUSED);
         };
         $(".log-jump-start").click(logJumpStart);
-    
+
         var logJumpEnd = function() {
             setCurrentBlackboxTime(flightLog.getMaxTime());
             setGraphState(GRAPH_STATE_PAUSED);
         };
         $(".log-jump-end").click(logJumpEnd);
-        
+
         var videoJumpStart = function() {
             setVideoTime(0);
             setGraphState(GRAPH_STATE_PAUSED);
         };
         $(".video-jump-start").click(videoJumpStart);
-    
+
         var videoJumpEnd = function() {
             if (video.duration) {
                 setVideoTime(video.duration);
@@ -1075,20 +1075,20 @@ function BlackboxLogViewer() {
                 setGraphState(GRAPH_STATE_PLAY);
             } else {
                 setGraphState(GRAPH_STATE_PAUSED);
-            }            
-        };  
+            }
+        };
         $(".log-play-pause").click(logPlayPause);
-        
+
         var logSyncHere = function() {
             setVideoOffset(video.currentTime);
         };
         $(".log-sync-here").click(logSyncHere);
-        
+
         var logSyncBack = function() {
             setVideoOffset(videoOffset - 1 / 15, true);
         };
         $(".log-sync-back").click(logSyncBack);
-    
+
         var logSyncForward = function() {
             setVideoOffset(videoOffset + 1 / 15, true);
         };
@@ -1122,7 +1122,7 @@ function BlackboxLogViewer() {
 
             // the log is offset by the minTime
             var newTime = stringTimetoMsec($(".graph-time").val());
-                   
+
             if (!isNaN(newTime)) {
                 if (hasVideo) {
                     setVideoTime(newTime / 1000000 + videoOffset);
@@ -1130,17 +1130,17 @@ function BlackboxLogViewer() {
                     newTime += flightLog.getMinTime();
                     setCurrentBlackboxTime(newTime);
                 }
-                invalidateGraph();               
+                invalidateGraph();
             }
         });
-       
+
         function newGraphConfig(newConfig) {
                 lastGraphConfig = graphConfig; // Remember the last configuration.
                 graphConfig = newConfig;
-                
+
                 activeGraphConfig.adaptGraphs(flightLog, graphConfig);
-                
-                prefs.set('graphConfig', graphConfig);            
+
+                prefs.set('graphConfig', graphConfig);
         }
 
         function expandGraphConfig(index) { // Put each of the fields into a seperate graph
@@ -1153,7 +1153,7 @@ function BlackboxLogViewer() {
                 singleGraph.label = graphConfig[index].fields[i].name;
                 expandedGraphConfig.push(singleGraph);
             }
-            
+
             newGraphConfig(expandedGraphConfig);
             invalidateGraph();
 
@@ -1182,12 +1182,12 @@ function BlackboxLogViewer() {
             invalidateGraph();
 
         }
-        
-        var 
+
+        var
             graphConfigDialog = new GraphConfigurationDialog($("#dlgGraphConfiguration"), function(newConfig) {
-                newGraphConfig(newConfig);   
+                newGraphConfig(newConfig);
             }),
-            
+
             headerDialog = new HeaderDialog($("#dlgHeaderDialog"), function(newSysConfig) {
                 if(newSysConfig!=null) {
                     prefs.set('lastHeaderData', newSysConfig);
@@ -1195,7 +1195,7 @@ function BlackboxLogViewer() {
 
                     // Save Current Position then re-calculate all the log information
                     var activePosition = (hasVideo)?video.currentTime:currentBlackboxTime;
-                    
+
                     selectLog(null);
                     if (hasVideo) {
                         setVideoTime(activePosition);
@@ -1207,16 +1207,16 @@ function BlackboxLogViewer() {
 
             keysDialog = new KeysDialog($("#dlgKeysDialog")),
 
-            userSettingsDialog = new UserSettingsDialog($("#dlgUserSettings"), 
+            userSettingsDialog = new UserSettingsDialog($("#dlgUserSettings"),
             function(defaultSettings) { // onLoad
-    
+
             prefs.get('userSettings', function(item) {
                 if(item) {
                             userSettings = item;
                          } else {
                              userSettings = defaultSettings;
                          }
-                });                
+                });
             },
 
             function(newSettings) { // onSave
@@ -1236,13 +1236,13 @@ function BlackboxLogViewer() {
 
 	        exportDialog = new VideoExportDialog($("#dlgVideoExport"), function(newConfig) {
 	            videoConfig = newConfig;
-	            
+
 	            prefs.set('videoConfig', newConfig);
 	        });
-        
+
         $(".open-graph-configuration-dialog").click(function(e) {
             e.preventDefault();
-            
+
             graphConfigDialog.show(flightLog, activeGraphConfig.getGraphs());
         });
 
@@ -1253,25 +1253,25 @@ function BlackboxLogViewer() {
 
         $(".open-keys-dialog").click(function(e) {
             e.preventDefault();
-            
+
             keysDialog.show();
         });
 
         $(".open-user-settings-dialog").click(function(e) {
             e.preventDefault();
-            
+
             userSettingsDialog.show(flightLog, userSettings);
         });
 
         $(".marker-offset", statusBar).click(function(e) {
 	        setCurrentBlackboxTime(markerTime);
-	        invalidateGraph(); 
+	        invalidateGraph();
         });
-        
+
         for(var i=1; i< 9; i++) { // Loop through all the bookmarks.
             $('.bookmark-'+i, statusBar).click(function() {
     	        setCurrentBlackboxTime(bookmarkTimes[parseInt(this.className.slice(-1))]);
-    	        invalidateGraph(); 
+    	        invalidateGraph();
             });
         }
 
@@ -1281,7 +1281,7 @@ function BlackboxLogViewer() {
                 $('.bookmark-'+ i, statusBar).css('visibility', 'hidden' );
             }
             $('.bookmark-clear', statusBar).css('visibility', 'hidden' );
-	        invalidateGraph(); 
+	        invalidateGraph();
         });
 
         $('.configuration-file-name', statusBar).click(function(e) {
@@ -1294,12 +1294,12 @@ function BlackboxLogViewer() {
             saveWorkspaces();
             e.preventDefault();
         });
-        
-                
+
+
         if (FlightLogVideoRenderer.isSupported()) {
             $(".btn-video-export").click(function(e) {
                 setGraphState(GRAPH_STATE_PAUSED);
-    
+
                 exportDialog.show(flightLog, {
                     graphConfig: activeGraphConfig,
                     inTime: videoExportInTime,
@@ -1310,7 +1310,7 @@ function BlackboxLogViewer() {
                     hasAnalyser: hasAnalyser,
                     hasSticks: hasSticks
                 }, videoConfig);
-                
+
                 e.preventDefault();
             });
         } else {
@@ -1512,7 +1512,7 @@ function BlackboxLogViewer() {
             updateOverrideStatus();
         }
 
-        
+
         $('.log-graph-legend').on("mousedown", function(e) {
 
             if(e.which != 2) return; // is it the middle mouse button, no, then ignore
@@ -1529,14 +1529,14 @@ function BlackboxLogViewer() {
                 return;
             }
         });
-        
+
         $(document).on("mousewheel", function(e) {
 
         if($(e.target).hasClass('no-wheel')) { // prevent mousewheel scrolling on non scrollable elements.
             e.preventDefault();
             return;
         }
-        
+
         if (graph && $(e.target).parents('.modal').length == 0){
             var delta = Math.max(-1, Math.min(1, (e.originalEvent.wheelDelta)));
             if (delta!=0) {
@@ -1589,7 +1589,7 @@ function BlackboxLogViewer() {
             var shifted = (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey);
             if(e.which === 13 && e.target.type === 'text' && $(e.target).parents('.modal').length == 0) {
                 // pressing return on a text field clears the focus.
-                $(e.target).blur();                
+                $(e.target).blur();
             }
             // keyboard controls are disabled on modal dialog boxes and text entry fields
             if (graph && e.target.type != 'text' && $(e.target).parents('.modal').length == 0) {
@@ -1602,7 +1602,7 @@ function BlackboxLogViewer() {
                                 setVideoInTime(currentBlackboxTime);
                             }
                         }
-                        
+
                         e.preventDefault();
                     break;
                     case "O".charCodeAt(0):
@@ -1612,10 +1612,10 @@ function BlackboxLogViewer() {
                             } else {
                                 setVideoOutTime(currentBlackboxTime);
                             }
-                        }                        
+                        }
                         e.preventDefault();
                     break;
-                    case "M".charCodeAt(0): 
+                    case "M".charCodeAt(0):
                         if (e.altKey) { // adjust the video sync offset and remove marker
                           logSmartSync();
                         } else { // Add a marker to graph window
@@ -1623,7 +1623,7 @@ function BlackboxLogViewer() {
                             setMarker(!hasMarker);
                             $(".marker-offset", statusBar).text('Marker Offset ' + formatTime(0) + 'ms').css('visibility', (hasMarker)?'visible':'hidden');
                             invalidateGraph();
-                        }                        
+                        }
                         e.preventDefault();
                     break;
 
@@ -1697,7 +1697,7 @@ function BlackboxLogViewer() {
                         		if (!e.shiftKey) { // retrieve time from bookmark
 		                            if (bookmarkTimes[e.which-48] != null) {
 		                                setCurrentBlackboxTime(bookmarkTimes[e.which-48]);
-		                                invalidateGraph(); 
+		                                invalidateGraph();
 		                            }
 
 		                        } else {// store time to bookmark
@@ -1757,7 +1757,7 @@ function BlackboxLogViewer() {
                             console.log('Smoothing override toggle feature not functioning');
                         }
                         e.preventDefault();
-                    break;                    
+                    break;
 
                     case "X".charCodeAt(0): // S key to toggle between last graph smooth and none
                         try {
@@ -1773,7 +1773,7 @@ function BlackboxLogViewer() {
 
                     case "G".charCodeAt(0): // S key to toggle between last graph smooth and none
                         try {
-                            if(!(shifted)) { 
+                            if(!(shifted)) {
                                 toggleOverrideStatus('graphGridOverride', 'has-grid-override' );
                                 e.preventDefault();
                             }
@@ -1781,7 +1781,7 @@ function BlackboxLogViewer() {
                             console.log('Grid override toggle feature not functioning');
                         }
                         e.preventDefault();
-                    break;                        
+                    break;
 
                     // Toolbar shortcuts
                     case " ".charCodeAt(0): // start/stop playback
@@ -1826,13 +1826,13 @@ function BlackboxLogViewer() {
                 }
             }
         });
-        
+
         $(video).on({
             loadedmetadata: updateCanvasSize,
             error: reportVideoError,
             loadeddata: videoLoaded
         });
-        
+
         var percentageFormat = {
             to: function(value) {
                 return value.toFixed(0) + "%";
@@ -1841,7 +1841,7 @@ function BlackboxLogViewer() {
                 return parseFloat(value);
             }
         };
-        
+
         $(".playback-rate-control")
             .noUiSlider({
                 start: playbackRate,
@@ -1858,7 +1858,7 @@ function BlackboxLogViewer() {
                 setPlaybackRate(parseFloat($(this).val()));
             })
             .Link("lower").to($(".playback-rate"));
-    
+
         $(".graph-zoom-control")
             .noUiSlider({
                 start: graphZoom,
@@ -1875,13 +1875,13 @@ function BlackboxLogViewer() {
                 setGraphZoom(parseFloat($(this).val()));
             })
             .Link("lower").to($(".graph-zoom"));
-        
+
         $('.navbar-toggle').click(function(e) {
             $('.navbar-collapse').collapse('toggle');
-            
+
             e.preventDefault();
         });
-        
+
         seekBar.onSeek = setCurrentBlackboxTime;
 
     });

@@ -1,7 +1,7 @@
 {
-  "name": "betaflight-blackbox-explorer",
-  "displayName": "Betaflight - Blackbox Explorer",
-  "description": "Crossplatform blackbox analitics tool for Betaflight flight control system.",
+  "name": "butterflight-blackbox-explorer",
+  "displayName": "Butterflight - Blackbox Explorer",
+  "description": "Crossplatform blackbox analitics tool for Butterflight flight control system.",
   "version": "3.0.0",
   "main": "main_nwjs.html",
   "bg-script": "background.js",
@@ -18,9 +18,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/betaflight/blackbox-log-viewer"
+    "url": "github.com/butterflight/blackbox-log-viewer"
   },
-  "author": "The Betaflight open source project.",
+  "author": "The Butterflight open source project.",
   "license": "GPL-3.0",
   "dependencies": {},
   "devDependencies": {

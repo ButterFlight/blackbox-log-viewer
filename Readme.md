@@ -1,41 +1,33 @@
-# Betaflight Blackbox Explorer
+# ButterFlight Blackbox Explorer
 
 ![Main explorer interface](screenshots/main-interface.jpg)
 
-This tool allows you to open logs recorded by Betaflight's Blackbox feature in your web browser. You can seek through
+This tool allows you to open logs recorded by ButterFlight's Blackbox feature in your web browser. You can seek through
 the log to examine graphed values at each timestep. If you have a flight video, you can load that in as well and it'll
 be played behind the log. You can export the graphs as a WebM video to share with others.
 
 ## Installation
 
-There are three methods of installation available:
-
-### Chrome Web Store method
-
-The easiest way to get the explorer (if you have Google Chrome) is to install it from the Chrome Web Store:
-
-https://chrome.google.com/webstore/detail/betaflight-blackbox-explo/canpiagfkeefejklcojkhojdijglnghc
-
-This will add it to your computer as a Chrome App.
+There are two methods of installation available:
 
 ### Manual Chrome App install
 Download the contents of this repository by clicking the "download ZIP" button on the right of this page. Unpack
-the zip somewhere on your computer. In Google Chrome, open up the Extensions page, tick the "developer mode" tickbox, 
+the zip somewhere on your computer. In Google Chrome, open up the Extensions page, tick the "developer mode" tickbox,
 click the "load unpacked extension" button, and point it at the unpacked folder. This will add it as a Chrome App.
 
 ### Run as a webpage
 Download the contents of this repository by clicking the "download ZIP" button on the right of this page. Unpack
-the zip somewhere on your computer, and double click "index.html" file to open it with your web browser. 
+the zip somewhere on your computer, and double click "index.html" file to open it with your web browser.
 
-Note that the "video export" feature is only available when opened with Google Chrome. Also, running it this way will 
-limit the exported flight video to 500MB in size. Use one of the previous Chrome App install methods to unlock 
+Note that the "video export" feature is only available when opened with Google Chrome. Also, running it this way will
+limit the exported flight video to 500MB in size. Use one of the previous Chrome App install methods to unlock
 &gt;500MB video export.
 
 ## Usage
-Click the "Open log file/video" button at the top right and select your logged ".TXT" file and your flight video (if 
+Click the "Open log file/video" button at the top right and select your logged ".TXT" file and your flight video (if
 you recorded one).
 
-You can scroll through the log by clicking or dragging on the seek bar that appears underneath the main graph. The 
+You can scroll through the log by clicking or dragging on the seek bar that appears underneath the main graph. The
 current time is represented by the vertical red bar in the center of the graph. You can also click and drag left and
 right on the graph area to scrub backwards and forwards.
 
@@ -44,7 +36,7 @@ right on the graph area to scrub backwards and forwards.
 The blackbox plays a short beep on the buzzer when arming, and this corresponds with the start of the logged data.
 You can sync your log against your flight video by pressing the "start log here" button when you hear the beep in the
 video. You can tune the alignment of the log manually by pressing the nudge left and nudge right buttons in the log
-sync section, or by editing the value in the "log sync" box. Positive values move the log toward the end of the video, 
+sync section, or by editing the value in the "log sync" box. Positive values move the log toward the end of the video,
 negative values move it towards the beginning.
 
 ### Customizing the graph display
@@ -58,7 +50,7 @@ Or you may want to plot vbat against throttle to examine your battery's performa
 This tool has not been tested on Internet Explorer, but definitely won't work on versions earlier than version 9.
 
 Your web browser must support the video codec that your flight video uses in order to play it. Firefox doesn't support
-H.264 videos on Mac, so if your video won't play, try Google Chrome instead. If it still won't play, follow the 
+H.264 videos on Mac, so if your video won't play, try Google Chrome instead. If it still won't play, follow the
 instructions in the next section to convert your video using Handbrake.
 
 The best performing web browser tends to be Google Chrome, especially when trying to play your flight video at the same
@@ -88,7 +80,7 @@ List of possible values of `<task-name>`:
 * **dist** copies all the JS and CSS files in the `./dist` folder.
 * **apps** builds the apps in the `./apps` folder [1].
 * **debug** builds debug version of the apps in the `./debug` folder [1].
-* **release** zips up the apps into individual archives in the `./release` folder [1]. 
+* **release** zips up the apps into individual archives in the `./release` folder [1].
 
 [1] Running this task on macOS or Linux requires Wine, since it's needed to set the icon for the Windows app (build for specific platform to avoid errors).
 

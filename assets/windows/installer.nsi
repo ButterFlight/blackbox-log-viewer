@@ -9,14 +9,14 @@
 # ${DEST_FOLDER} - Destination folder for the installer files
 
 # Some definitions
-!define SOURCE_FILES          "..\..\apps\betaflight-blackbox-explorer\${PLATFORM}\*"
-!define APP_NAME              "Betaflight Blackbox Explorer"
-!define COMPANY_NAME          "Betaflight Team"
-!define GROUP_NAME            "Betaflight"
-!define FOLDER_NAME           "Betaflight-Blackbox-Explorer"
-!define FILE_NAME_INSTALLER   "betaflight-blackbox-explorer-installer_${VERSION}_${PLATFORM}.exe"
-!define FILE_NAME_UNINSTALLER "uninstall-betaflight-blackbox-explorer.exe"
-!define FILE_NAME_EXECUTABLE  "betaflight-blackbox-explorer.exe"
+!define SOURCE_FILES          "..\..\apps\butterflight-blackbox-explorer\${PLATFORM}\*"
+!define APP_NAME              "ButterFlight Blackbox Explorer"
+!define COMPANY_NAME          "ButterFlight Team"
+!define GROUP_NAME            "ButterFlight"
+!define FOLDER_NAME           "ButterFlight-Blackbox-Explorer"
+!define FILE_NAME_INSTALLER   "butterflight-blackbox-explorer-installer_${VERSION}_${PLATFORM}.exe"
+!define FILE_NAME_UNINSTALLER "uninstall-butterflight-blackbox-explorer.exe"
+!define FILE_NAME_EXECUTABLE  "butterflight-blackbox-explorer.exe"
 !define LICENSE               "..\..\LICENSE"
 
 
@@ -32,7 +32,7 @@ OutFile "..\..\${DEST_FOLDER}\${FILE_NAME_INSTALLER}"
 
 # set the default installation directory
 !if ${PLATFORM} == 'win64'
-    InstallDir "$PROGRAMFILES64\${GROUP_NAME}\${FOLDER_NAME}\" 
+    InstallDir "$PROGRAMFILES64\${GROUP_NAME}\${FOLDER_NAME}\"
 !else
     InstallDir "$PROGRAMFILES\${GROUP_NAME}\${FOLDER_NAME}\"
 !endif
@@ -70,13 +70,13 @@ Function .onInit
             # New version, select default folder
             UserInfo::GetAccountType
             Pop $R2
-            
+
             ${If} $R2 == "Admin"
                 # set the default installation directory
                 !if ${PLATFORM} == 'win64'
-                        StrCpy $INSTDIR "$PROGRAMFILES64\${GROUP_NAME}\${FOLDER_NAME}\" 
+                        StrCpy $INSTDIR "$PROGRAMFILES64\${GROUP_NAME}\${FOLDER_NAME}\"
                 !else
-                        StrCpy $INSTDIR "$PROGRAMFILES\${GROUP_NAME}\${FOLDER_NAME}\" 
+                        StrCpy $INSTDIR "$PROGRAMFILES\${GROUP_NAME}\${FOLDER_NAME}\"
                 !endif
             ${Else}
                 StrCpy $INSTDIR "$DOCUMENTS\${GROUP_NAME}\${FOLDER_NAME}\"
@@ -134,7 +134,7 @@ Section
     !insertmacro UNINSTALLER_DATA_END
 
     # create shortcuts in the start menu and on the desktop
-    CreateDirectory "$SMPROGRAMS\${GROUP_NAME}\${FOLDER_NAME}"    
+    CreateDirectory "$SMPROGRAMS\${GROUP_NAME}\${FOLDER_NAME}"
     CreateShortCut "$SMPROGRAMS\${GROUP_NAME}\${FOLDER_NAME}\${APP_NAME}.lnk" "$INSTDIR\${FILE_NAME_EXECUTABLE}"
     CreateShortCut "$SMPROGRAMS\${GROUP_NAME}\${FOLDER_NAME}\Uninstall ${APP_NAME}.lnk" "$INSTDIR\${FILE_NAME_UNINSTALLER}"
     CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${FILE_NAME_EXECUTABLE}"
@@ -171,10 +171,10 @@ Section "Uninstall"
 
     # terminate uninstaller if the .dat file does not exist
     !define UNINST_TERMINATE
- 
+
     # delete files
     !insertmacro UNINST_DELETE "$INSTDIR" "${UninstName}"
- 
+
     # remove installation folder if it is empty
     RMDir "$INSTDIR"
 
