@@ -133,9 +133,7 @@ a.disabled {
 }
 
 .header-pane {
-    margin-left:5%;
-    margin-right: 5%;
-    width: 90%;
+    width: 98%;
 }
 
 html:not(.has-log):not(.has-video) .header-pane {
@@ -157,6 +155,7 @@ html:not(.has-log):not(.has-video) .header-pane {
 .btn-file input[type=file] {
     position: absolute;
     top: 0;
+    top: 0;
     right: 0;
     min-width: 100%;
     min-height: 100%;
@@ -168,6 +167,9 @@ html:not(.has-log):not(.has-video) .header-pane {
     background: white;
     cursor: inherit;
     display: block;
+}
+.btn-close-log {
+    margin-left: 50px;
 }
 
 .log-seek-bar canvas {
@@ -498,6 +500,7 @@ html.has-analyser-fullscreen.has-analyser .analyser input {
 .log-field-values table,
 .log-field-values h4 {
     background-color: #FFFFFF;
+    color: black;
     overflow-y: auto;
     height: 20px;
 }
@@ -614,7 +617,7 @@ html.has-table.isBF .view-table,
 html.has-sticks.isBF .view-sticks,
 html.has-craft.isBF .view-craft,
 html:not(.video-hidden).isBF .view-video {
-     color: rgba(158, 100, 0,1);
+     color: rgba(247, 147, 30,1);
 }
 
 html.has-analyser-sticks.isCF .view-analyser-sticks,
@@ -1100,7 +1103,7 @@ html.isCF input[type="checkbox"].ios-switch:checked + div > div {
 /* Orange Knob */
 input[type="checkbox"].orange.ios-switch:checked + div > div ,
 html.isBF input[type="checkbox"].ios-switch:checked + div > div {
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(158, 100, 0,1);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(247, 147, 30,1);
 }
 
 /* Blue Knob */
@@ -1111,17 +1114,26 @@ html.isINAV input[type="checkbox"].ios-switch:checked + div > div {
 
 html.isBF .config-graph h4 span:first-child,
 html.isBF .log-graph-config h3 span {
-    background-image: linear-gradient(to bottom,#fff8e9 0,#ffbb00 100%);
+    /*background-image: linear-gradient(to bottom,#fff8e9 0,#ffbb00 100%);*/
+    color: black;
+    background-color: #f7931e;
+    border: 1px solid #dba718;
 }
 
 html.isCF .config-graph h4 span:first-child,
 html.isCF .log-graph-config h3 span {
-    background-image: linear-gradient(to bottom,#fff8e9 0,#00a23f 100%);
+    /*background-image: linear-gradient(to bottom,#fff8e9 0,#00a23f 100%);*/
+    color: black;
+    background-color: #00a23f;
+    border: 1px solid #fff8e9;
 }
 
 html.isINAV .config-graph h4 span:first-child,
 html.isINAV .log-graph-config h3 span {
-    background-image: linear-gradient(to bottom,#fff8e9 0,#0850ac 100%);
+    /*background-image: linear-gradient(to bottom,#fff8e9 0,#0850ac 100%);*/
+    color: black;
+    background-color: #0850ac;
+    border: 1px solid #fff8e9;
 }
 
 .config-graph h4 span,

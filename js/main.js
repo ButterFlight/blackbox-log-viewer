@@ -614,7 +614,8 @@ function BlackboxLogViewer() {
             currentOffsetCache.log      = file.name; // store the name of the loaded log file
             currentOffsetCache.index    = null;      // and clear the index
 
-            hasLog = true; html.toggleClass("has-log", hasLog);
+            hasLog = true;
+            html.toggleClass("has-log", hasLog);
             html.toggleClass("has-craft", hasCraft);
             html.toggleClass("has-table", hasTable);
             html.toggleClass("has-sticks", hasSticks);
@@ -866,8 +867,9 @@ function BlackboxLogViewer() {
         hasAnalyser = false;
         html.toggleClass("has-analyser", hasAnalyser);
 
-        $(".btn-new-window").click(function(e) {
-            chrome.app.window.create('index.html', {
+        $(".btn-new-window").click(function (e)
+        {
+            chrome.app.window.create(isAppRunningInsideAniFrame() ? './bbexplorer/index.html' : 'index.html', {
                 'innerBounds' : {
                     'width'  : INNER_BOUNDS_WIDTH,
                     'height' : INNER_BOUNDS_HEIGHT
@@ -912,6 +914,10 @@ function BlackboxLogViewer() {
                     }
 
             }
+        });
+
+        $('.btn-close-log').click(function () {
+            document.location.reload();
         });
 
         // New View Controls
@@ -1141,6 +1147,14 @@ function BlackboxLogViewer() {
                 activeGraphConfig.adaptGraphs(flightLog, graphConfig);
 
                 prefs.set('graphConfig', graphConfig);
+        }
+
+        function isAppRunningInsideAniFrame() { // Detect if we are running inside an iFrame
+            try {
+                return window.self !== window.top;
+            } catch (e) {
+                return true;
+            }
         }
 
         function expandGraphConfig(index) { // Put each of the fields into a seperate graph
