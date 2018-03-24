@@ -994,17 +994,19 @@ function BlackboxLogViewer() {
             toggleOverrideStatus('graphGridOverride', 'has-grid-override');
         });
 
+        $("#changelog .log").load("./changelog.html");
+
         /** changelog trigger **/
         $("#changelog_toggle").on('click', function() {
             var state = $(this).data('state2');
             if (state) { // log closed
                 $("#changelog").animate({right: -695}, 200, function () {
-                    html.removeClass('log_open');
+                    $(".welcome-pane").removeClass('log_open');
                 });
                 state = false;
             } else { // log open
                 $("#changelog").animate({right: 0}, 200);
-                html.addClass('log_open');
+                $(".welcome-pane").addClass('log_open');
                 state = true;
             }
             $(this).text(state ? 'Close' : 'Changelog');
@@ -1906,7 +1908,7 @@ function getManifestVersion(manifest) {
         manifest = chrome.runtime.getManifest();
     }
 
-    var version = manifest.version_name;
+    var version = manifest.integrated_bbe_version;
     if (!version) {
         version = manifest.version;
     }
